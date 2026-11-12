@@ -1,0 +1,366 @@
+{% extends "base.html" %}
+{% block title %}MediCare — AI Healthcare Management{% endblock %}
+
+{% block full_content %}
+
+<div class="mc-home">
+
+  <!-- ── Hero ─────────────────────────────────────────────── -->
+  <section class="mc-hero">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-7 col-md-9">
+
+          <div class="mc-badge">
+            <span class="mc-dot"></span>
+            AI-Powered Healthcare Platform
+          </div>
+
+          <h1 class="mc-title">
+            Smart Healthcare,<br>
+            <span>Powered by AI</span>
+          </h1>
+
+          <p class="mc-subtitle">
+            MediCare connects patients, doctors, and admins on one
+            intelligent platform — AI diagnosis, appointments,
+            insurance, and emergency support all in one place.
+          </p>
+
+          <div class="mc-cta-group">
+            <a href="{{ url_for('auth.register') }}" class="mc-btn-primary">
+              <i class="bi bi-person-plus-fill"></i> Get Started Free
+            </a>
+            <a href="{{ url_for('auth.login') }}" class="mc-btn-outline">
+              <i class="bi bi-box-arrow-in-right"></i> Sign In
+            </a>
+          </div>
+
+          <div class="mc-trust">
+            <span><i class="bi bi-shield-fill-check"></i> Secure &amp; Private</span>
+            <span><i class="bi bi-clock-fill"></i> 24/7 Available</span>
+            <span><i class="bi bi-award-fill"></i> Certified Doctors</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 3 Feature Cards ───────────────────────────────────── -->
+  <section class="mc-features">
+    <div class="container">
+      <div class="row g-4 justify-content-center">
+
+        <!-- AI Chatbot -->
+        <div class="col-md-4 col-sm-6">
+          <div class="mc-card">
+            <div class="mc-card-icon" style="background:linear-gradient(135deg,#0d6efd,#0288d1);">
+              <i class="bi bi-robot"></i>
+            </div>
+            <h5>AI Medical Chatbot</h5>
+            <p>
+              Describe your symptoms and get instant AI-powered guidance,
+              disease predictions, medicine precautions, and specialist
+              recommendations — 24/7.
+            </p>
+            <a href="{{ url_for('chatbot.chat') }}" class="mc-card-link">
+              Try MediBot <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Appointment Booking -->
+        <div class="col-md-4 col-sm-6">
+          <div class="mc-card">
+            <div class="mc-card-icon" style="background:linear-gradient(135deg,#059669,#0d9488);">
+              <i class="bi bi-calendar-check"></i>
+            </div>
+            <h5>Appointment Booking</h5>
+            <p>
+              Browse certified doctors by specialization, pick a
+              date and time, and confirm your appointment in under
+              a minute. No phone calls needed.
+            </p>
+            <a href="{{ url_for('appointments.book') }}" class="mc-card-link">
+              Book Now <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Insurance Management -->
+        <div class="col-md-4 col-sm-6">
+          <div class="mc-card">
+            <div class="mc-card-icon" style="background:linear-gradient(135deg,#7c3aed,#a855f7);">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <h5>Insurance Management</h5>
+            <p>
+              Submit, track, and manage insurance claims digitally.
+              No paperwork, no waiting rooms — just fast,
+              transparent claim approvals.
+            </p>
+            <a href="{{ url_for('insurance.index') }}" class="mc-card-link">
+              Manage Claims <i class="bi bi-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Compact CTA ───────────────────────────────────────── -->
+  <section class="mc-bottom-cta">
+    <div class="container">
+      <div class="mc-cta-box">
+        <div class="row align-items-center g-3">
+          <div class="col-md-8">
+            <h5 class="mb-1 fw-700">Ready to take control of your health?</h5>
+            <p class="mb-0 text-muted small">
+              Free account · No credit card · Ready in 30 seconds
+            </p>
+          </div>
+          <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('auth.register') }}"
+               class="btn btn-primary rounded-pill px-4 fw-600">
+              <i class="bi bi-person-plus-fill me-1"></i>Create Free Account
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /.mc-home -->
+
+{% endblock %}
+
+{% block scripts %}
+<style>
+/* ── Page wrapper ────────────────────────────────────────── */
+.mc-home {
+  background: #f8fafc;
+  min-height: calc(100vh - 56px);
+}
+
+/* ── Hero ───────────────────────────────────────────────── */
+.mc-hero {
+  background: linear-gradient(150deg, #0a2463 0%, #1565c0 55%, #0288d1 100%);
+  padding: 72px 0 80px;
+  position: relative;
+  overflow: hidden;
+}
+.mc-hero::after {
+  content: '';
+  position: absolute;
+  bottom: -1px; left: 0; right: 0;
+  height: 48px;
+  background: #f8fafc;
+  clip-path: ellipse(55% 100% at 50% 100%);
+}
+
+.mc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 50px;
+  padding: 5px 16px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.9);
+  margin-bottom: 24px;
+}
+.mc-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: mc-pulse 1.6s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes mc-pulse {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.5; transform:scale(1.4); }
+}
+
+.mc-title {
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 20px;
+}
+.mc-title span {
+  background: linear-gradient(90deg, #7dd3fc, #a5f3fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.mc-subtitle {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.78);
+  line-height: 1.75;
+  max-width: 520px;
+  margin: 0 auto 36px;
+}
+
+.mc-cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.mc-btn-primary {
+  background: #fff;
+  color: #0d6efd;
+  border-radius: 50px;
+  padding: 13px 28px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.15);
+  transition: all .22s ease;
+}
+.mc-btn-primary:hover {
+  background: #e8f1ff;
+  color: #0a58ca;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.mc-btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.55);
+  border-radius: 50px;
+  padding: 12px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all .22s ease;
+}
+.mc-btn-outline:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: #fff;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.mc-trust {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  color: rgba(255,255,255,0.6);
+  font-size: 0.8rem;
+}
+.mc-trust span { display: flex; align-items: center; gap: 6px; }
+.mc-trust i { font-size: 0.85rem; }
+
+/* ── Feature cards ──────────────────────────────────────── */
+.mc-features {
+  padding: 64px 0 56px;
+}
+
+.mc-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 32px 28px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+  height: 100%;
+  transition: all .28s cubic-bezier(.25,.8,.25,1);
+  position: relative;
+  overflow: hidden;
+}
+.mc-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0d6efd, #0288d1);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .28s ease;
+}
+.mc-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(13,110,253,0.12);
+  border-color: transparent;
+}
+.mc-card:hover::after { transform: scaleX(1); }
+
+.mc-card-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+}
+
+.mc-card h5 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 12px;
+}
+
+.mc-card p {
+  font-size: 0.875rem;
+  color: #64748b;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.mc-card-link {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0d6efd;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: gap .2s ease;
+}
+.mc-card-link:hover { gap: 10px; }
+.mc-card-link i { font-size: 0.8rem; transition: transform .2s; }
+.mc-card-link:hover i { transform: translateX(2px); }
+
+/* ── Bottom CTA ─────────────────────────────────────────── */
+.mc-bottom-cta {
+  padding: 0 0 56px;
+}
+.mc-cta-box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 28px 32px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.05);
+}
+
+/* ── Mobile ─────────────────────────────────────────────── */
+@media (max-width: 576px) {
+  .mc-hero      { padding: 52px 0 68px; }
+  .mc-features  { padding: 48px 0 40px; }
+  .mc-cta-group { flex-direction: column; align-items: center; }
+  .mc-btn-primary,
+  .mc-btn-outline { width: 100%; justify-content: center; }
+  .mc-cta-box   { padding: 22px 20px; }
+}
+</style>
+{% endblock %}

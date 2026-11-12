@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Manage Appointments{% endblock %}
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0"><i class="bi bi-calendar2-week"></i> Manage Appointments</h3>
+  <span class="text-muted small">{{ appointments|length }} record(s) shown</span>
+</div>
+
+<!-- Status filter tabs -->
+<ul class="nav nav-tabs mb-4">
+  {% for slug, label in [("all","All"), ("pending","Pending"),
+                          ("confirmed","Confirmed"), ("completed","Completed"),
+                          ("cancelled","Cancelled")] %}
+  <li class="nav-item">
+    <a class="nav-link {% if status_filter == slug %}active fw-semibold{% endif %}"
+       href="{{ url_for('admin.manage_appointments', status=slug) }}">
+      {{ label }}
+      {% if slug == "all" %}
+        <span class="badge bg-secondary ms-1">{{ appointments|length }}</span>
+      {% endif %}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+
+<!-- Status legend -->
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <span class="badge bg-warning text-dark px-3 py-2"><i class="bi bi-clock me-1"></i>Pending</span>
+  <span class="badge bg-primary px-3 py-2"><i class="bi bi-check-circle me-1"></i>Confirmed</span>
+  <span class="badge bg-success px-3 py-2"><i class="bi bi-check2-all me-1"></i>Completed</span>
+  <span class="badge bg-danger px-3 py-2"><i class="bi bi-x-circle me-1"></i>Cancelled</span>
+</div>
+
+{% if appointments %}
+<div class="table-responsive">
+  <table class="table table-bordered table-hover align-middle bg-white shadow-sm rounded">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Patient</th>
+        <th>Doctor</th>
+        <th>Specialization</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Notes</th>
+        <th>Status</th>
+        <th class="text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in appointments %}
+      {% set doc_profile = a.doctor.doctor_profile %}
+      <tr id="row-{{ a.id }}">
+        <td class="text-muted small">{{ loop.index }}</td>
+
+        <td>
+          <i class="bi bi-person-circle text-secondary me-1"></i>
+          {{ a.patient.name }}
+        </td>
+
+        <td>
+          <i class="bi bi-person-badge text-primary me-1"></i>
+          {{ a.doctor.name }}
+        </td>
+
+        <td>
+          {% if doc_profile %}
+            <span class="badge bg-secondary">{{ doc_profile.specialization }}</span>
+          {% else %}—{% endif %}
+        </td>
+
+        <td>{{ a.date }}</td>
+        <td>{{ a.time }}</td>
+
+        <td class="text-muted small">{{ a.notes or '—' }}</td>
+
+        <!-- Status badge — updated in-place by JS -->
+        <td id="status-{{ a.id }}">
+          {{ status_badge(a.status) }}
+        </td>
+
+        <!-- Action dropdown -->
+        <td class="text-center">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                    type="button" data-bs-toggle="dropdown">
+              Update
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow">
+              <li>
+                <button class="dropdown-item text-primary"
+                        onclick="updateStatus({{ a.id }}, 'confirmed')">
+                  <i class="bi bi-check-circle me-2"></i>Confirm
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item text-success"
+                        onclick="updateStatus({{ a.id }}, 'completed')">
+                  <i class="bi bi-check2-all me-2"></i>Mark Completed
+                </button>
+              </li>
+              <li>
+                <button class="dropdown-item text-warning"
+                        onclick="updateStatus({{ a.id }}, 'pending')">
+                  <i class="bi bi-clock me-2"></i>Reset to Pending
+                </button>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <button class="dropdown-item text-danger"
+                        onclick="updateStatus({{ a.id }}, 'cancelled')">
+                  <i class="bi bi-x-circle me-2"></i>Cancel
+                </button>
+              </li>
+            </ul>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% else %}
+<div class="alert alert-info">
+  <i class="bi bi-info-circle me-2"></i>
+  No appointments found
+  {% if status_filter != 'all' %}with status <strong>{{ status_filter }}</strong>{% endif %}.
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% macro status_badge(status) %}
+  {% if status == 'confirmed' %}
+    <span class="badge bg-primary px-3 py-2">
+      <i class="bi bi-check-circle me-1"></i>Confirmed
+    </span>
+  {% elif status == 'completed' %}
+    <span class="badge bg-success px-3 py-2">
+      <i class="bi bi-check2-all me-1"></i>Completed
+    </span>
+  {% elif status == 'cancelled' %}
+    <span class="badge bg-danger px-3 py-2">
+      <i class="bi bi-x-circle me-1"></i>Cancelled
+    </span>
+  {% else %}
+    <span class="badge bg-warning text-dark px-3 py-2">
+      <i class="bi bi-clock me-1"></i>Pending
+    </span>
+  {% endif %}
+{% endmacro %}
+
+{% block scripts %}
+<script>
+const STATUS_BADGES = {
+  pending:   `<span class="badge bg-warning text-dark px-3 py-2"><i class="bi bi-clock me-1"></i>Pending</span>`,
+  confirmed: `<span class="badge bg-primary px-3 py-2"><i class="bi bi-check-circle me-1"></i>Confirmed</span>`,
+  completed: `<span class="badge bg-success px-3 py-2"><i class="bi bi-check2-all me-1"></i>Completed</span>`,
+  cancelled: `<span class="badge bg-danger px-3 py-2"><i class="bi bi-x-circle me-1"></i>Cancelled</span>`,
+};
+
+async function updateStatus(appointmentId, newStatus) {
+  const statusCell = document.getElementById(`status-${appointmentId}`);
+  const row        = document.getElementById(`row-${appointmentId}`);
+
+  // Optimistic UI — show spinner immediately
+  statusCell.innerHTML = `<span class="spinner-border spinner-border-sm text-secondary"></span>`;
+
+  try {
+    const res = await fetch(`/admin/appointments/status/${appointmentId}`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify({ status: newStatus }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok && data.success) {
+      // Swap badge in-place
+      statusCell.innerHTML = STATUS_BADGES[newStatus];
+
+      // Flash the row briefly to confirm the change
+      row.classList.add("table-active");
+      setTimeout(() => row.classList.remove("table-active"), 800);
+
+      showToast(`Appointment #${appointmentId} marked as <strong>${newStatus}</strong>.`,
+                newStatus === "cancelled" ? "danger" : "success");
+    } else {
+      statusCell.innerHTML = STATUS_BADGES["pending"];
+      showToast("Update failed. Please try again.", "danger");
+    }
+  } catch (err) {
+    statusCell.innerHTML = STATUS_BADGES["pending"];
+    showToast("Network error. Please try again.", "danger");
+  }
+}
+
+function showToast(message, type = "success") {
+  const container = document.getElementById("toast-container");
+  const id = `toast-${Date.now()}`;
+  container.insertAdjacentHTML("beforeend", `
+    <div id="${id}" class="toast align-items-center text-white bg-${type} border-0 show mb-2"
+         role="alert" style="min-width:280px;">
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                onclick="document.getElementById('${id}').remove()"></button>
+      </div>
+    </div>`);
+  setTimeout(() => {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }, 3500);
+}
+</script>
+
+<!-- Toast container -->
+<div id="toast-container"
+     class="position-fixed bottom-0 end-0 p-3"
+     style="z-index:1100;"></div>
+{% endblock %}

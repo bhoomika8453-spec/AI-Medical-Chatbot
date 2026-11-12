@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Add Doctor{% endblock %}
+{% block content %}
+<h3><i class="bi bi-person-plus"></i> Add New Doctor</h3>
+<div class="card shadow mt-3" style="max-width:550px">
+  <div class="card-body">
+    <form method="POST">
+      <div class="mb-3">
+        <label class="form-label">Full Name</label>
+        <input type="text" name="name" class="form-control" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Specialization</label>
+        <input type="text" name="specialization" class="form-control" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input type="text" name="phone" class="form-control" required/>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Years of Experience</label>
+        <input type="number" name="experience" class="form-control" min="0" value="0" required/>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Add Doctor</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

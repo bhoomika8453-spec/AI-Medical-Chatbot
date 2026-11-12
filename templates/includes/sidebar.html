@@ -1,0 +1,161 @@
+<!-- SIDEBAR PARTIAL — include inside dashboard pages only -->
+
+{% set path = request.path %}
+
+<!-- Mobile overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<aside class="sidebar" id="sidebar">
+
+  <!-- Brand -->
+  <div class="sidebar-brand">
+    <a href="/" class="d-flex align-items-center gap-2 text-decoration-none">
+      <div class="sidebar-brand-icon">
+        <i class="bi bi-heart-pulse-fill"></i>
+      </div>
+      <span class="sidebar-brand-text">MediCare</span>
+    </a>
+    <button class="sidebar-close-btn d-lg-none" onclick="closeSidebar()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- User card -->
+  <div class="sidebar-user">
+    <div class="sidebar-avatar">
+      {{ current_user.name[0].upper() }}
+    </div>
+    <div class="sidebar-user-info">
+      <div class="sidebar-user-name">{{ current_user.name }}</div>
+      <div class="sidebar-user-role">
+        {% if current_user.role == 'admin' %}
+          <i class="bi bi-shield-fill text-warning me-1"></i>Administrator
+        {% elif current_user.role == 'doctor' %}
+          <i class="bi bi-person-badge-fill text-info me-1"></i>Doctor
+        {% else %}
+          <i class="bi bi-person-heart text-success me-1"></i>Patient
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="sidebar-nav">
+
+    <!-- ── MAIN ── -->
+    <div class="sidebar-section-label">Main</div>
+
+    {% if current_user.role == 'admin' %}
+
+      <a href="/admin/dashboard"
+         class="sidebar-link {% if path == '/admin/dashboard' %}active{% endif %}">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/admin/appointments"
+         class="sidebar-link {% if '/admin/appointments' in path %}active{% endif %}">
+        <i class="bi bi-calendar2-week"></i>
+        <span>Appointments</span>
+      </a>
+      <a href="/admin/users"
+         class="sidebar-link {% if '/admin/users' in path %}active{% endif %}">
+        <i class="bi bi-people-fill"></i>
+        <span>Patients</span>
+      </a>
+      <a href="/admin/doctors"
+         class="sidebar-link {% if '/admin/doctors' in path %}active{% endif %}">
+        <i class="bi bi-person-badge-fill"></i>
+        <span>Doctors</span>
+      </a>
+      <a href="/admin/claims"
+         class="sidebar-link {% if '/admin/claims' in path %}active{% endif %}">
+        <i class="bi bi-shield-check"></i>
+        <span>Insurance Claims</span>
+      </a>
+
+    {% elif current_user.role == 'doctor' %}
+
+      <a href="/doctor/dashboard"
+         class="sidebar-link {% if path == '/doctor/dashboard' %}active{% endif %}">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/doctor/appointments"
+         class="sidebar-link {% if '/doctor/appointments' in path %}active{% endif %}">
+        <i class="bi bi-calendar2-week"></i>
+        <span>Appointments</span>
+      </a>
+      <a href="/doctor/patients"
+         class="sidebar-link {% if '/doctor/patients' in path %}active{% endif %}">
+        <i class="bi bi-people-fill"></i>
+        <span>My Patients</span>
+      </a>
+
+    {% else %}
+
+      <a href="/patient/dashboard"
+         class="sidebar-link {% if path == '/patient/dashboard' %}active{% endif %}">
+        <i class="bi bi-speedometer2"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="/appointments/list"
+         class="sidebar-link {% if '/appointments' in path %}active{% endif %}">
+        <i class="bi bi-calendar2-week"></i>
+        <span>Appointments</span>
+      </a>
+      <a href="/patient/history"
+         class="sidebar-link {% if '/patient/history' in path %}active{% endif %}">
+        <i class="bi bi-file-medical"></i>
+        <span>Medical History</span>
+      </a>
+      <a href="/insurance/"
+         class="sidebar-link {% if '/insurance' in path %}active{% endif %}">
+        <i class="bi bi-shield-check"></i>
+        <span>Insurance</span>
+      </a>
+
+    {% endif %}
+
+    <!-- ── TOOLS ── -->
+    <div class="sidebar-section-label mt-3">Tools</div>
+
+    <a href="/chatbot/"
+       class="sidebar-link {% if '/chatbot' in path %}active{% endif %}">
+      <i class="bi bi-robot"></i>
+      <span>AI Chatbot</span>
+    </a>
+    <a href="/predict/"
+       class="sidebar-link {% if '/predict' in path %}active{% endif %}">
+      <i class="bi bi-activity"></i>
+      <span>Disease Prediction</span>
+    </a>
+    <a href="/emergency/"
+       class="sidebar-link {% if '/emergency' in path %}active{% endif %}">
+      <i class="bi bi-hospital text-danger"></i>
+      <span>Emergency</span>
+      <span class="sidebar-badge">SOS</span>
+    </a>
+
+    <!-- ── ACCOUNT ── -->
+    <div class="sidebar-section-label mt-3">Account</div>
+
+    <a href="/patient/profile"
+       class="sidebar-link {% if '/profile' in path %}active{% endif %}">
+      <i class="bi bi-person-circle"></i>
+      <span>Settings</span>
+    </a>
+    <a href="/auth/logout" class="sidebar-link sidebar-link-danger">
+      <i class="bi bi-box-arrow-left"></i>
+      <span>Logout</span>
+    </a>
+
+  </nav>
+
+  <!-- Sidebar footer -->
+  <div class="sidebar-footer">
+    <a href="tel:911" class="sidebar-emergency-btn">
+      <i class="bi bi-telephone-fill me-2"></i>Emergency 911
+    </a>
+  </div>
+
+</aside>

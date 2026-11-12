@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}My Appointments{% endblock %}
+{% block content %}
+<h3>My Appointments</h3>
+<table class="table table-bordered mt-3">
+  <thead class="table-dark">
+    <tr><th>Patient ID</th><th>Date</th><th>Time</th><th>Status</th><th>Notes</th></tr>
+  </thead>
+  <tbody>
+    {% for a in appointments %}
+    <tr>
+      <td>{{ a.patient_id }}</td>
+      <td>{{ a.date }}</td>
+      <td>{{ a.time }}</td>
+      <td><span class="badge bg-warning">{{ a.status }}</span></td>
+      <td>{{ a.notes }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

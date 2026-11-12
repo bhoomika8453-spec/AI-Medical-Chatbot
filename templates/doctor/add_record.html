@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Add Record — {{ patient.name }}{% endblock %}
+{% block content %}
+
+<div class="mb-4">
+  <a href="{{ url_for('doctor.patient_records', patient_id=patient.id) }}"
+     class="text-decoration-none text-muted small">
+    <i class="bi bi-arrow-left me-1"></i>Back to {{ patient.name }}'s records
+  </a>
+</div>
+
+<h3 class="mb-1"><i class="bi bi-file-plus text-primary me-2"></i>Add Medical Record</h3>
+<p class="text-muted mb-4">Patient: <strong>{{ patient.name }}</strong> &mdash; {{ patient.email }}</p>
+
+<div class="card border-0 shadow-sm" style="max-width:680px;">
+  <div class="card-body p-4">
+    <form method="POST">
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Visit Date <span class="text-danger">*</span></label>
+        <input type="date" name="visit_date" class="form-control"
+               value="{{ today }}" max="{{ today }}" required/>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Symptoms</label>
+        <input type="text" name="symptoms" class="form-control"
+               placeholder="fever, headache, fatigue (comma-separated)"/>
+        <div class="form-text">Separate multiple symptoms with commas.</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Diagnosis</label>
+        <textarea name="diagnosis" class="form-control" rows="2"
+                  placeholder="e.g. Viral influenza"></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Medicines Prescribed</label>
+        <input type="text" name="medicines" class="form-control"
+               placeholder="Paracetamol 500mg, Amoxicillin 250mg (comma-separated)"/>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Prescription Notes</label>
+        <textarea name="prescription" class="form-control" rows="2"
+                  placeholder="Dosage instructions, frequency, duration…"></textarea>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Doctor Notes</label>
+        <textarea name="doctor_notes" class="form-control" rows="3"
+                  placeholder="Internal notes, follow-up instructions…"></textarea>
+      </div>
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary rounded-pill px-4">
+          <i class="bi bi-save me-1"></i>Save Record
+        </button>
+        <a href="{{ url_for('doctor.patient_records', patient_id=patient.id) }}"
+           class="btn btn-outline-secondary rounded-pill px-4">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+{% endblock %}

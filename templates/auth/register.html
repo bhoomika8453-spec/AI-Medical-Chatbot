@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Create Account — MediCare{% endblock %}
+{% block body_class %}glass-page{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- Floating orbs -->
+  <div class="auth-orb auth-orb-1"></div>
+  <div class="auth-orb auth-orb-2"></div>
+  <div class="auth-orb auth-orb-3"></div>
+
+  <div class="auth-card fade-in">
+
+    <!-- Header -->
+    <div class="auth-card-header">
+      <div class="auth-logo-ring" style="background: linear-gradient(135deg,#059669,#0d9488);">
+        <i class="bi bi-person-plus-fill"></i>
+      </div>
+      <h1 class="auth-title">Create account</h1>
+      <p class="auth-subtitle">Join MediCare — it's free forever</p>
+    </div>
+
+    <!-- Body -->
+    <div class="auth-card-body">
+
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show rounded-3 mb-3 py-2 px-3" style="font-size:0.85rem;">
+            <i class="bi bi-info-circle me-2"></i>{{ message }}
+            <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endwith %}
+
+      <form method="POST" autocomplete="off">
+
+        <div class="mb-3">
+          <label class="glass-label">
+            <i class="bi bi-person me-1 text-success"></i>Full Name
+          </label>
+          <input type="text" name="name" class="form-control glass-input"
+                 placeholder="Dr. Jane Smith" required autofocus/>
+        </div>
+
+        <div class="mb-3">
+          <label class="glass-label">
+            <i class="bi bi-envelope me-1 text-success"></i>Email address
+          </label>
+          <input type="email" name="email" class="form-control glass-input"
+                 placeholder="you@example.com" required/>
+        </div>
+
+        <div class="mb-4">
+          <label class="glass-label">
+            <i class="bi bi-lock me-1 text-success"></i>Password
+          </label>
+          <div class="position-relative">
+            <input type="password" name="password" id="regPassword"
+                   class="form-control glass-input pe-5"
+                   placeholder="Create a strong password" required/>
+            <button type="button"
+                    class="btn btn-link position-absolute top-50 end-0 translate-middle-y pe-3 text-muted p-0 border-0"
+                    onclick="togglePwd('regPassword', this)"
+                    tabindex="-1">
+              <i class="bi bi-eye fs-5"></i>
+            </button>
+          </div>
+          <div class="mt-2 d-flex gap-1" id="strength-bar">
+            <div class="flex-fill rounded" style="height:3px;background:#e2e8f0;" id="s1"></div>
+            <div class="flex-fill rounded" style="height:3px;background:#e2e8f0;" id="s2"></div>
+            <div class="flex-fill rounded" style="height:3px;background:#e2e8f0;" id="s3"></div>
+            <div class="flex-fill rounded" style="height:3px;background:#e2e8f0;" id="s4"></div>
+          </div>
+          <small class="text-muted" id="strength-label" style="font-size:0.72rem;"></small>
+        </div>
+
+        <!-- Terms -->
+        <div class="mb-4 d-flex align-items-start gap-2">
+          <input type="checkbox" class="form-check-input mt-1 flex-shrink-0" id="terms" required/>
+          <label class="form-check-label text-muted" for="terms" style="font-size:0.82rem;">
+            I agree to the
+            <a href="#" class="text-primary fw-600">Terms of Service</a> and
+            <a href="#" class="text-primary fw-600">Privacy Policy</a>
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-glass-success w-100 py-3">
+          <i class="bi bi-person-check-fill me-2"></i>Create Free Account
+        </button>
+
+      </form>
+
+      <!-- Benefits strip -->
+      <div class="row g-2 mt-3">
+        {% for icon, text in [
+          ("bi-shield-fill-check", "Secure & private"),
+          ("bi-clock-fill",        "24/7 AI support"),
+          ("bi-award-fill",        "Free forever"),
+        ] %}
+        <div class="col-4 text-center">
+          <i class="bi {{ icon }} text-success d-block mb-1" style="font-size:1rem;"></i>
+          <small class="text-muted" style="font-size:0.7rem;">{{ text }}</small>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="auth-footer-text">
+        Already have an account?
+        <a href="{{ url_for('auth.login') }}">Sign in</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function togglePwd(id, btn) {
+  const input = document.getElementById(id);
+  const icon  = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'bi bi-eye-slash fs-5';
+  } else {
+    input.type = 'password';
+    icon.className = 'bi bi-eye fs-5';
+  }
+}
+
+// Password strength meter
+document.getElementById('regPassword').addEventListener('input', function () {
+  const val = this.value;
+  const bars   = [document.getElementById('s1'), document.getElementById('s2'),
+                  document.getElementById('s3'), document.getElementById('s4')];
+  const label  = document.getElementById('strength-label');
+  const colors = ['#ef4444','#f59e0b','#3b82f6','#10b981'];
+  const labels = ['Weak','Fair','Good','Strong'];
+
+  let score = 0;
+  if (val.length >= 8)              score++;
+  if (/[A-Z]/.test(val))            score++;
+  if (/[0-9]/.test(val))            score++;
+  if (/[^A-Za-z0-9]/.test(val))     score++;
+
+  bars.forEach((b, i) => {
+    b.style.background = i < score ? colors[score - 1] : '#e2e8f0';
+  });
+  label.textContent = val.length ? labels[score - 1] || '' : '';
+  label.style.color = score ? colors[score - 1] : '#94a3b8';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Emergency Services{% endblock %}
+{% block content %}
+<h3><i class="bi bi-hospital text-danger"></i> Emergency Services</h3>
+
+<h5 class="mt-4">Nearby Hospitals</h5>
+<div class="row g-3 mt-1">
+  {% for h in hospitals %}
+  <div class="col-md-4">
+    <div class="card border-danger shadow">
+      <div class="card-body">
+        <h6 class="text-danger">{{ h.name }}</h6>
+        <p class="mb-1"><i class="bi bi-geo-alt"></i> {{ h.address }}</p>
+        <p class="mb-1"><i class="bi bi-telephone"></i> {{ h.phone }}</p>
+        <p class="mb-0"><i class="bi bi-signpost"></i> {{ h.distance }}</p>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<h5 class="mt-5">Emergency Doctor Contacts</h5>
+<div class="row g-3 mt-1">
+  {% for doc in doctors %}
+  <div class="col-md-4">
+    <div class="card shadow border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-person-badge-fill fs-3 text-primary me-3"></i>
+          <div>
+            <h6 class="mb-0">{{ doc.user.name }}</h6>
+            <small class="text-muted">{{ doc.specialization }}</small>
+          </div>
+        </div>
+        <p class="mb-1"><i class="bi bi-telephone-fill text-success"></i>
+          <a href="tel:{{ doc.phone }}">{{ doc.phone }}</a>
+        </p>
+        <p class="mb-1"><i class="bi bi-envelope text-secondary"></i> {{ doc.user.email }}</p>
+        <p class="mb-0"><i class="bi bi-clock-history text-info"></i> {{ doc.experience }} yrs experience</p>
+        <span class="badge mt-2 {% if doc.available %}bg-success{% else %}bg-danger{% endif %}">
+          {% if doc.available %}Available{% else %}Unavailable{% endif %}
+        </span>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

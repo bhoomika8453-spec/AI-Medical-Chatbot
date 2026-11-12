@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Insurance Claims{% endblock %}
+{% block content %}
+<h3>Insurance Claims</h3>
+<table class="table table-bordered mt-3">
+  <thead class="table-dark">
+    <tr><th>ID</th><th>Patient ID</th><th>Amount</th><th>Status</th><th>Submitted</th></tr>
+  </thead>
+  <tbody>
+    {% for claim in claims %}
+    <tr>
+      <td>{{ claim.id }}</td>
+      <td>{{ claim.patient_id }}</td>
+      <td>${{ claim.claim_amount }}</td>
+      <td><span class="badge bg-info">{{ claim.status }}</span></td>
+      <td>{{ claim.submitted_at.strftime('%Y-%m-%d') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% block title %}AI Disease Prediction{% endblock %}
+{% block content %}
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <i class="bi bi-activity text-primary" style="font-size:2.5rem;"></i>
+      <h3 class="mt-2">AI Disease Prediction</h3>
+      <p class="text-muted">Enter your symptoms separated by commas. The AI will predict the most likely condition.</p>
+    </div>
+
+    <!-- Input Form -->
+    <div class="card shadow border-0 mb-4">
+      <div class="card-body p-4">
+        <form method="POST" id="predict-form">
+          <label class="form-label fw-semibold">Your Symptoms</label>
+
+          <!-- Tag pill input area -->
+          <div id="tag-container" class="form-control d-flex flex-wrap gap-1 mb-2"
+               style="min-height:50px; cursor:text;"
+               onclick="document.getElementById('tag-input').focus()">
+          </div>
+          <input type="text" id="tag-input" class="form-control mb-1"
+                 placeholder="Type a symptom and press Enter or comma…"
+                 autocomplete="off"/>
+          <!-- Autocomplete dropdown -->
+          <ul id="autocomplete-list" class="list-group position-absolute z-3 d-none" style="max-width:400px;"></ul>
+
+          <!-- Hidden field that actually gets submitted -->
+          <input type="hidden" name="symptoms" id="symptoms-hidden"
+                 value="{{ user_input }}"/>
+
+          <div class="d-flex gap-2 mt-3">
+            <button type="submit" class="btn btn-primary px-4">
+              <i class="bi bi-search"></i> Predict Disease
+            </button>
+            <button type="button" class="btn btn-outline-secondary" onclick="clearAll()">
+              <i class="bi bi-x-circle"></i> Clear
+            </button>
+          </div>
+        </form>
+
+        <!-- Suggested quick symptoms -->
+        <div class="mt-3">
+          <small class="text-muted">Quick add:</small>
+          {% set quick = ["fever", "cough", "headache", "fatigue", "nausea",
+                          "chest pain", "shortness of breath", "dizziness",
+                          "joint pain", "diarrhea"] %}
+          {% for s in quick %}
+          <span class="badge bg-light text-dark border me-1 mt-1"
+                style="cursor:pointer; font-size:0.8rem;"
+                onclick="addTag('{{ s }}')">+ {{ s }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Error -->
+    {% if error %}
+    <div class="alert alert-warning d-flex align-items-center gap-2">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+    <!-- Result Card -->
+    {% if result %}
+    <div class="card shadow border-0 border-start border-4 border-{{ result.color }}">
+      <div class="card-body p-4">
+
+        <!-- Disease name + severity -->
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+          <div>
+            <h4 class="mb-1"><i class="bi bi-clipboard2-pulse text-{{ result.color }}"></i>
+              {{ result.disease }}
+            </h4>
+            <span class="badge bg-{{ result.color }} fs-6">{{ result.severity }} Severity</span>
+          </div>
+          <div class="text-end">
+            <small class="text-muted d-block mb-1">Confidence</small>
+            <h4 class="text-{{ result.color }} mb-0">{{ result.confidence }}%</h4>
+          </div>
+        </div>
+
+        <!-- Confidence bar -->
+        <div class="progress mb-4" style="height:10px;">
+          <div class="progress-bar bg-{{ result.color }}"
+               role="progressbar"
+               style="width:{{ result.confidence }}%"
+               aria-valuenow="{{ result.confidence }}"
+               aria-valuemin="0" aria-valuemax="100">
+          </div>
+        </div>
+
+        <!-- Matched symptoms -->
+        <div class="mb-4">
+          <h6 class="text-muted text-uppercase" style="font-size:0.75rem; letter-spacing:1px;">
+            Matched Symptoms
+          </h6>
+          <div class="d-flex flex-wrap gap-2 mt-1">
+            {% for s in result.matched %}
+            <span class="badge bg-{{ result.color }} bg-opacity-10
+                         text-{{ result.color }} border border-{{ result.color }}
+                         px-3 py-2" style="font-size:0.85rem;">
+              <i class="bi bi-check-circle-fill me-1"></i>{{ s }}
+            </span>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="row g-4">
+          <!-- Precautions -->
+          <div class="col-md-7">
+            <h6 class="text-muted text-uppercase" style="font-size:0.75rem; letter-spacing:1px;">
+              Recommended Precautions
+            </h6>
+            <ul class="list-group list-group-flush mt-2">
+              {% for p in result.precautions %}
+              <li class="list-group-item px-0 border-0 py-1">
+                <i class="bi bi-shield-check text-success me-2"></i>{{ p }}
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+
+          <!-- Specialist -->
+          <div class="col-md-5">
+            <h6 class="text-muted text-uppercase" style="font-size:0.75rem; letter-spacing:1px;">
+              Suggested Specialist
+            </h6>
+            <div class="card bg-primary bg-opacity-10 border-0 mt-2 p-3 text-center">
+              <i class="bi bi-person-badge-fill text-primary fs-2 mb-2"></i>
+              <h6 class="text-primary mb-1">{{ result.specialist }}</h6>
+              <small class="text-muted">Consult this specialist for proper diagnosis</small>
+              <a href="{{ url_for('appointments.book') }}"
+                 class="btn btn-primary btn-sm mt-3">
+                <i class="bi bi-calendar-plus"></i> Book Appointment
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert alert-secondary mt-4 mb-0 py-2 px-3" style="font-size:0.8rem;">
+          <i class="bi bi-info-circle"></i>
+          <strong>Disclaimer:</strong> This is an AI-based preliminary assessment only.
+          It does not replace professional medical diagnosis. Always consult a qualified doctor.
+        </div>
+
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const ALL_SYMPTOMS = {{ all_symptoms | tojson }};
+let tags = [];
+
+// Pre-populate tags if coming back from a POST
+const prefill = {{ user_input | tojson }};
+if (prefill) {
+  prefill.split(",").forEach(s => { if (s.trim()) addTag(s.trim()); });
+}
+
+function addTag(value) {
+  value = value.trim().toLowerCase();
+  if (!value || tags.includes(value)) return;
+  tags.push(value);
+  renderTags();
+  syncHidden();
+}
+
+function removeTag(value) {
+  tags = tags.filter(t => t !== value);
+  renderTags();
+  syncHidden();
+}
+
+function renderTags() {
+  const container = document.getElementById("tag-container");
+  container.innerHTML = tags.map(t => `
+    <span class="badge bg-primary d-flex align-items-center gap-1 px-2 py-2"
+          style="font-size:0.85rem;">
+      ${t}
+      <i class="bi bi-x-circle-fill" style="cursor:pointer;"
+         onclick="removeTag('${t}')"></i>
+    </span>`).join("");
+}
+
+function syncHidden() {
+  document.getElementById("symptoms-hidden").value = tags.join(",");
+}
+
+function clearAll() {
+  tags = [];
+  renderTags();
+  syncHidden();
+  document.getElementById("tag-input").value = "";
+}
+
+// Autocomplete
+const input   = document.getElementById("tag-input");
+const acList  = document.getElementById("autocomplete-list");
+
+input.addEventListener("input", () => {
+  const q = input.value.trim().toLowerCase();
+  acList.innerHTML = "";
+  if (!q) { acList.classList.add("d-none"); return; }
+  const matches = ALL_SYMPTOMS.filter(s => s.includes(q)).slice(0, 8);
+  if (!matches.length) { acList.classList.add("d-none"); return; }
+  matches.forEach(s => {
+    const li = document.createElement("li");
+    li.className = "list-group-item list-group-item-action";
+    li.style.cursor = "pointer";
+    li.textContent = s;
+    li.onclick = () => { addTag(s); input.value = ""; acList.classList.add("d-none"); };
+    acList.appendChild(li);
+  });
+  acList.classList.remove("d-none");
+});
+
+input.addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === ",") {
+    e.preventDefault();
+    const val = input.value.replace(",", "").trim();
+    if (val) addTag(val);
+    input.value = "";
+    acList.classList.add("d-none");
+  }
+});
+
+document.addEventListener("click", e => {
+  if (!acList.contains(e.target) && e.target !== input)
+    acList.classList.add("d-none");
+});
+
+document.getElementById("predict-form").addEventListener("submit", e => {
+  // Also add whatever is still typed in the input box
+  const val = input.value.replace(",", "").trim();
+  if (val) addTag(val);
+  syncHidden();
+  if (!tags.length) { e.preventDefault(); input.focus(); }
+});
+</script>
+{% endblock %}

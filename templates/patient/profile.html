@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<h3>My Profile</h3>
+<div class="card mt-3 shadow" style="max-width:500px">
+  <div class="card-body">
+    <p><strong>Name:</strong> {{ current_user.name }}</p>
+    <p><strong>Email:</strong> {{ current_user.email }}</p>
+    <p><strong>Role:</strong> {{ current_user.role }}</p>
+    <p><strong>Joined:</strong> {{ current_user.created_at.strftime('%Y-%m-%d') }}</p>
+  </div>
+</div>
+{% endblock %}

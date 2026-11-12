@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Insurance Claims{% endblock %}
+{% block content %}
+<h3><i class="bi bi-shield-check"></i> My Insurance Claims</h3>
+<a href="{{ url_for('insurance.submit') }}" class="btn btn-primary mb-3">+ Submit New Claim</a>
+<table class="table table-bordered">
+  <thead class="table-dark">
+    <tr><th>ID</th><th>Amount</th><th>Description</th><th>Status</th><th>Date</th></tr>
+  </thead>
+  <tbody>
+    {% for c in claims %}
+    <tr>
+      <td>{{ c.id }}</td>
+      <td>${{ c.claim_amount }}</td>
+      <td>{{ c.description }}</td>
+      <td><span class="badge bg-info">{{ c.status }}</span></td>
+      <td>{{ c.submitted_at.strftime('%Y-%m-%d') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
